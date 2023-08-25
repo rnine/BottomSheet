@@ -214,7 +214,18 @@ public struct BottomSheet {
             }
         }
 
-        UIApplication.shared.windows.first?.rootViewController?.present(nav, animated: true, completion: nil)
+        let scene = UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .filter { $0.activationState == .foregroundActive }
+            .first
+
+        if var topController = scene?.keyWindow?.rootViewController {
+            while let presentedViewController = topController.presentedViewController {
+                topController = presentedViewController
+            }
+
+            topController.present(nav, animated: true, completion: nil)
+        }
     }
 
     fileprivate static func setLargestUndimmedDetentIdentifier(
